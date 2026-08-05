@@ -1,15 +1,4 @@
-"""
-mf/models.py — Architectures de prévision multi-horizon (PyTorch).
 
-Interface commune
------------------
-  entrée  x : (B, L, F)
-  sortie    : (B, H)      si n_quantiles == 1  (prévision ponctuelle)
-              (B, H, Q)   si n_quantiles  > 1  (prévision probabiliste)
-
-Modèles : TCN, BiLSTM, CNNBiLSTMAttention, TFTLite (TFT compact).
-Tous partagent une tête linéaire produisant H × Q valeurs.
-"""
 import torch
 import torch.nn as nn
 

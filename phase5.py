@@ -1,49 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-run_phase5.py — PHASE 5 : ROUTAGE SOUS INCERTITUDE, sur DONNÉES RÉELLES (ERA5).
 
-Ce script exécute la Phase 5 de bout en bout et produit tous ses résultats
-(optimisation vitesse/départ + valeur décisionnelle), directement à partir du
-jeu de données ERA5 réel — exactement comme run_experiments.py / run_smoke.py :
-il s'auto-localise, trouve le manifeste et les parquets, et tourne aussi bien
-en terminal qu'en cellule Jupyter/Spyder (aucun crash d'argument).
-
-Ce qu'il fait
--------------
-Pour une route, sur la période de TEST :
-  1. Géométrie exacte des tronçons depuis le manifeste (lat/lon/dist_km).
-  2. Champ espace-temps de quantiles PRÉVUS q10/q50/q90 de wspd et swh,
-     construit à partir des vraies séries ERA5 :
-       • médiane = mélange skill-pondéré  obs ↔ climatologie mensuelle
-         (skillful à court terme, climatologique au-delà) ;
-       • dispersion croissant avec l'échéance, saturant à la variabilité
-         climatologique (comportement mesuré en Phase 4).
-     (Pour brancher de VRAIES prévisions quantiles d'un modèle entraîné, voir la
-      NOTE dans mf/routing.build_scenario.)
-  3. Optimisation (vitesse de service, délai de départ) minimisant le carburant
-     ESPÉRÉ sous contrainte de sécurité P(swh>Hs_max) ≤ alpha et deadline —
-     planificateur PROBABILISTE (quantiles) vs DÉTERMINISTE (médiane seule).
-  4. BACKTEST : les deux plans sont RÉÉVALUÉS sur la VÉRITÉ ERA5, sur de
-     nombreuses dates de départ → carburant réel et TAUX RÉEL de dépassement de
-     sécurité. La différence = « valeur de l'incertitude ».
-
-Résultats produits (dans out_dir, défaut « phase5/ ») :
-  • phase5_<route>.json      — agrégats + détail par date de départ ;
-  • Fig_phase5_<route>.png   — départ représentatif (houle rencontrée + bande
-                               q10–q90 + seuil) et barres agrégées (taux de
-                               violation réel et carburant réel, prob vs det).
-
-Lancement
----------
-  # terminal
-  python run_phase5.py --route R1_SHA_RTM --hs-max 6.0 --alpha 0.10
-  # Jupyter / Spyder : éditez CONFIG puis exécutez, ou
-  import run_phase5 as P5
-  P5.run_config(route="R2_NFK_HAM", n_departures=16)
-
-Si aucun jeu de données n'est trouvé, le script bascule sur un scénario de
-DÉMONSTRATION synthétique (aucune donnée requise), en le signalant clairement.
-"""
 from __future__ import annotations
 import os
 import sys
@@ -58,7 +14,7 @@ def _locate_mf_root():
     cands = []
     try:
         cands.append(os.path.dirname(os.path.abspath(__file__)))
-    except NameError:                       # cellule Jupyter : pas de __file__
+    except NameError:                       
         pass
     cands.append(os.getcwd())
     for base in list(cands):
@@ -87,11 +43,7 @@ import importlib
 from mf import routing as RT
 from mf import data as D
 
-# Jupyter / Spyder : si le noyau a déjà chargé d'ANCIENNES versions de ces modules
-# lors d'une session précédente, « from mf import routing » renvoie la version en
-# cache (sans les fonctions Phase 5 récentes) → AttributeError. On force le
-# rechargement depuis le disque pour éviter cela, sans avoir à redémarrer le noyau.
-importlib.reload(D)
+
 importlib.reload(RT)
 if not hasattr(RT, "build_route_geometry"):
     raise SystemExit(
@@ -106,7 +58,7 @@ if not hasattr(RT, "build_route_geometry"):
         f"  • Vérifiez le fichier réellement chargé : {getattr(RT, '__file__', '?')}")
 
 
-# ── Résolveurs dataset / route_config (robustes, comme run_experiments) ───────
+
 def _resolve_dataset(data_dir, manifest):
     """Localise (data_dir, manifest_path) ou (None, None)."""
     if manifest and os.path.isfile(manifest):
@@ -175,7 +127,7 @@ def _load_route_df(data_dir, route):
     return df
 
 
-# ── Configuration (éditable en notebook) ──────────────────────────────────────
+
 CONFIG = dict(
     route="R1_SHA_RTM",
     mode="auto",               # auto | real | demo
@@ -197,7 +149,7 @@ CONFIG = dict(
     horizon_h=36.0,            # horizon d'anticipation (≈ échéance ML exploitable)
     # grille d'optimisation / Monte-Carlo
     n_v=11, n_dep=7, n_mc=500,
-    # modèle de prévision (propriétés mesurées en Phase 4)
+    # modèle de prévision 
     tau_skill_h=36.0,          # décroissance du skill (mélange obs↔climato)
     tau_spread_h=60.0,         # croissance de la dispersion
     rel_err_short={"swh": 0.17, "wspd": 0.22},  # erreur rel. à court terme
@@ -228,7 +180,7 @@ def _resolve_results(results_dir):
     return None
 
 
-# ── Cœur : Phase 5 sur données réelles ────────────────────────────────────────
+
 def run_real(cfg, data_dir, manifest_path, manifest=None, skill="__load__"):
     if manifest is None:
         manifest = D.load_manifest(manifest_path)
@@ -673,18 +625,18 @@ def run_sweep(cfg, data_dir, manifest_path, hs_list):
         mx = recs[0]["max_swh"]; exp = recs[0]["exposure"]
         print(f"   → EXPOSITION {route} : houle max {mx:.1f} m | " + " ".join(
             f"{k.replace('frac_over_', '>')}={v:.1%}" for k, v in exp.items()))
-        # backtest au seuil nominal (s'il n'était pas dans la liste balayée)
+        
         if res_nominal is None:
             res_nominal = RT.rolling_backtest(
                 prep, ship, {**cfg, "route": route, "Hs_max": nominal, "skill": skill})
-        # figure PAR ROUTE au seuil nominal + collecte pour la consolidée
+       
         _make_real_figure(res_nominal, ship,
                           {**cfg, "route": route, "Hs_max": nominal}, out)
         a_nom = res_nominal["aggregate"]; a_nom["route"] = route
         summary.append(a_nom)
     if not sweep:
         raise RuntimeError("Balayage vide (aucune route exploitable).")
-    # (1) figures au seuil NOMINAL : consolidée inter-routes + récap (BH sur routes)
+    
     if summary:
         _apply_bh(summary, q=0.05)
         json.dump(summary, open(os.path.join(out, "phase5_summary_all_routes.json"),
@@ -692,7 +644,7 @@ def run_sweep(cfg, data_dir, manifest_path, hs_list):
         _write_summary_csv(summary,
                            os.path.join(out, "phase5_summary_all_routes.csv"))
         _make_consolidated_figure(summary, {**cfg, "Hs_max": nominal}, out)
-    # (2) figure de sensibilité : BH sur TOUTE la famille (routes × seuils)
+   
     flat = [rec for recs in sweep.values() for rec in recs]
     _apply_bh(flat, q=0.05)
     n_bh = sum(1 for r in flat if r["significant_bh"])

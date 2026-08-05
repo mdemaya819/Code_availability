@@ -1,17 +1,4 @@
-"""
-aggregate_results.py — Agrégation Phase 4.
 
-Lit les JSON produits par run_experiments.py et produit des tables prêtes pour
-publication :
-  - results_overall.csv     : par (cible, modèle), moyenne±écart-type sur graines
-                              de RMSE/MAE/CRPS/couverture/skill/Diebold-Mariano ;
-  - results_per_route.csv   : RMSE par route ;
-  - results_per_enso.csv    : RMSE par phase ENSO (El_Nino / La_Nina / Neutral) ;
-  - baselines.csv           : RMSE/MAE des baselines par cible ;
-  - report.md               : rapport lisible (tables Markdown par cible).
-
-Usage :  python aggregate_results.py --results results --out report
-"""
 import os
 import json
 import glob

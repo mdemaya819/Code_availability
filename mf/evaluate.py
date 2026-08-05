@@ -1,10 +1,4 @@
-"""
-mf/evaluate.py — Évaluation d'un modèle entraîné sur le TEST, avec
-décomposition par route et par phase ENSO, et skill vs baselines.
 
-Mémoire bornée : parcours streaming des blocs, accumulation de sommes
-(Σe², Σ|e|, n) par groupe ; échantillon d'erreurs capé pour Diebold-Mariano.
-"""
 import numpy as np
 import pandas as pd
 from .data import window_block

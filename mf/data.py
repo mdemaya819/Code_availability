@@ -1,19 +1,4 @@
-"""
-mf/data.py — Couche données anti-fuite pour la prévision métocéan multi-horizon.
 
-Garanties anti-fuite (vérifiées par tests/test_data_leakage.py) :
-  1. Split STRICTEMENT par année (depuis le manifeste : train/val/test).
-  2. Normalisation z-score calculée SUR LE TRAIN UNIQUEMENT (stats du
-     manifeste), appliquée à l'identique à val/test.
-  3. Fenêtrage effectué SÉPARÉMENT dans chaque bloc (route, node_id, split) :
-     aucune fenêtre ne traverse une frontière de split ni une frontière de
-     nœud (entrée ET cible restent dans le même bloc contigu).
-  4. Variables auto-écartées si stat de normalisation absente OU NaN quasi
-     total (ex. swh à 100 % NaN dans ce jeu) → jamais injectées en entrée.
-
-Le module s'importe SANS torch ; la classe WindowDataset importe torch
-paresseusement (uniquement si on l'instancie).
-"""
 from __future__ import annotations
 import json
 import glob

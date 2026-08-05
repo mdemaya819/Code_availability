@@ -1,32 +1,4 @@
-"""
-mf/routing.py — Phase 5 : décision de vitesse/départ SOUS INCERTITUDE, pilotée
-par les prévisions probabilistes (quantiles) de vent et de vagues.
 
-Pourquoi une formulation ESPACE-TEMPS ?
---------------------------------------
-La hauteur de vagues d'un tronçon est une condition météo exogène : la vitesse
-ne la change pas. Ce que la vitesse (et l'instant de départ) changent, c'est le
-MOMENT où le navire atteint chaque tronçon — donc les conditions PRÉVUES qu'il y
-rencontre. On modélise donc la prévision comme un champ (tronçon k, temps t) de
-quantiles q10/q50/q90 ; la dispersion croît avec l'échéance (propriété mesurée
-en Phase 4). Une tempête TRANSITOIRE traverse la route : ralentir/avancer le
-départ permet de la laisser passer.
-
-Décision
---------
-Choisir (vitesse de service V, délai de départ d) minimisant le carburant
-ESPÉRÉ, sous :
-  (1) contrainte en probabilité de sécurité : P(swh > Hs_max sur un tronçon) ≤ alpha ;
-  (2) fenêtre d'arrivée : départ + durée ≤ eta_max_h.
-
-« Valeur de l'incertitude » = écart entre le planificateur PROBABILISTE
-(quantiles + chance constraint) et le planificateur DÉTERMINISTE (médiane seule),
-tous deux RÉÉVALUÉS sous la vraie incertitude Monte-Carlo.
-
-Physique navire/rotor : modèle de 1er ordre cohérent avec route_config.PHYSICS
-et la simulation de voyage d'Article 1. La courbe de poussée du rotor est
-REPRÉSENTATIVE ; brancher le surrogate GPR d'Article 1 via `routing.rotor_power_fn`.
-"""
 from __future__ import annotations
 import numpy as np
 from dataclasses import dataclass

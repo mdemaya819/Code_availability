@@ -1,61 +1,4 @@
-"""
-ERA5_download_decadal.py
-========================
-Téléchargement décennal ERA5 pour l'analyse opérationnelle probabiliste
-des rotors Flettner sur 4 routes commerciales (2015–2024).
 
-Variables téléchargées
------------------------
-Obligatoires  : u10, v10 (composantes du vent à 10 m)
-Complémentaires: MSLP, T2m, Hs (vagues)
-
-Résolution spatiale  : 0.25° × 0.25° (native ERA5)
-Résolution temporelle: 1 heure (données horaires)
-Période              : Janvier 2015 → Décembre 2024 (120 mois)
-
-Organisation des fichiers de sortie
--------------------------------------
-ERA5_data/
-├── R1_SHA_RTM/
-│   ├── Asia_IO/
-│   │   ├── ERA5_R1_SHA_RTM_Asia_IO_2015_01.nc
-│   │   ├── ERA5_R1_SHA_RTM_Asia_IO_2015_02.nc
-│   │   └── ...
-│   └── RedSea_EU/
-│       └── ...
-├── R2_NFK_HAM/
-│   └── NAtlantic/
-│       └── ...
-├── R3_SIN_SYD/
-│   └── IndoPacific/
-│       └── ...
-└── R4_SHA_LAX/
-    ├── WPacific/
-    │   └── ...
-    └── EPacific/
-        └── ...
-
-Usage
-------
-    python ERA5_download_decadal.py                        # Tout télécharger
-    python ERA5_download_decadal.py --route R2_NFK_HAM    # Une route seulement
-    python ERA5_download_decadal.py --year 2020            # Une année seulement
-    python ERA5_download_decadal.py --route R1 --year 2020 --month 01
-
-Estimation du volume
----------------------
-~120 Mo par fichier × 480 fichiers = ~57 Go total
-Durée estimée : 5–10 jours (files d'attente CDS variables)
-
-Prérequis
-----------
-pip install cdsapi netCDF4 xarray numpy
-~/.cdsapirc configuré avec UID et API Key Copernicus CDS
-
-Référence
-----------
-Likeufack Mdemaya et al. — Ocean Engineering (soumission)
-"""
 
 import cdsapi
 import os
@@ -66,11 +9,10 @@ import logging
 from pathlib import Path
 from datetime import datetime
 
-# Ajouter le dossier courant au path pour importer route_config
-try:
+
     _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 except NameError:
-    # Jupyter: __file__ n'est pas défini → utiliser le dossier courant
+    
     _SCRIPT_DIR = os.getcwd()
 sys.path.insert(0, _SCRIPT_DIR)
 from route_config import ROUTES, ERA5_CONFIG

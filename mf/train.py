@@ -1,13 +1,4 @@
-"""
-mf/train.py — Boucle d'entraînement anti-fuite.
 
-Principes :
-  - DataLoaders construits par split via mf.data.make_torch_dataset (les
-    fenêtres ne traversent jamais de frontière split/nœud).
-  - Normalisation appliquée par les scalers TRAIN-ONLY (mf.data.Scaler).
-  - Perte : MSE (ponctuel) ou pinball multi-quantile (probabiliste).
-  - Early stopping sur la perte de VALIDATION ; graine fixée ; AdamW.
-"""
 import numpy as np
 import torch
 import torch.nn as nn

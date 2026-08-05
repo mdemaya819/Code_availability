@@ -1,14 +1,4 @@
-"""
-mf/baselines.py — Références obligatoires (tout gain DL est mesuré en skill
-relatif à ces baselines). Toutes respectent l'anti-fuite : la climatologie
-est apprise SUR LE TRAIN UNIQUEMENT ; persistance et naïf saisonnier
-n'utilisent que le passé observé dans la fenêtre d'entrée.
 
-Évaluation STREAMING par bloc (route, node, split) : on n'accumule jamais
-toutes les fenêtres en mémoire (compatible 24 M lignes). On renvoie, pour le
-split d'évaluation, le tableau des erreurs par fenêtre×horizon (utile pour le
-test de Diebold-Mariano) — borné en mémoire car ~ N_windows × H.
-"""
 import numpy as np
 import pandas as pd
 from .data import window_block

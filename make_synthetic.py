@@ -1,11 +1,4 @@
-"""
-make_synthetic.py — Génère un parquet SYNTHÉTIQUE à la forme EXACTE du
-manifeste (toutes les colonnes de feature_columns, mêmes plages via les stats
-train-only, ONI mensuel, features temporelles déterministes), pour valider le
-pipeline SANS les vraies données. Générique : s'adapte à tout schéma de
-manifeste (y compris swh/mwp/mwd ajoutés en v2).
-Usage :  python make_synthetic.py --manifest dataset_manifest.json
-"""
+
 import argparse, json
 import numpy as np
 import pandas as pd

@@ -1,9 +1,4 @@
-"""
-mf/metrics.py — Métriques de prévision (déterministes + probabilistes).
 
-Toutes les fonctions opèrent en UNITÉS PHYSIQUES (inverser la normalisation
-avant d'évaluer). y_true / y_pred : (N, H) ou (N,).
-"""
 import numpy as np
 from scipy import stats as _st
 

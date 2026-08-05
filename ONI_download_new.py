@@ -1,34 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-ONI_download.py
-===============
-Régénère ONI_index_2015_2024.csv (Oceanic Niño Index, NOAA/CPC, ERSSTv5).
 
-CORRECTION DU BUG D'ORIGINE
----------------------------
-Le fichier corrompu contenait la colonne TOTAL (SST absolue ~27 °C) au lieu de
-la colonne ANOM (l'anomalie = l'ONI, dans [-3, +3] °C). Ce script lit
-EXPLICITEMENT la colonne ANOM.
-
-COUVERTURE
-----------
-L'ONI est mensuel et glissant sur 3 mois : DJF, JFM, FMA, MAM, AMJ, MJJ, JJA,
-JAS, ASO, SON, OND, NDJ. Les 12 saisons par an couvrent donc TOUTES les saisons
-(été, automne, hiver, printemps) — il n'y a pas de fichier "hiver seulement".
-
-Source : https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
-Format : colonnes  SEAS  YR  TOTAL  ANOM   (on utilise ANOM)
-
-Classement ENSO officiel (CPC) : un épisode El Niño / La Niña est déclaré
-lorsque l'ONI franchit ±0.5 °C pendant >= 5 saisons glissantes CONSÉCUTIVES.
-On fournit aussi une classification simple par seuil (±0.5 °C) par mois.
-
-Usage :
-    python ONI_download.py                 # télécharge, sinon table de secours
-    python ONI_download.py --offline       # force la table de secours embarquée
-    python ONI_download.py --start 2015 --end 2024 --out ONI_index_2015_2024.csv
-"""
 import argparse, io, sys
 import numpy as np
 import pandas as pd

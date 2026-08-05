@@ -1,31 +1,4 @@
-"""
-run_pipeline.py — Entrée principale (données réelles), UN modèle.
 
-Exécute, sans fuite : (1) les baselines, (2) le modèle profond choisi, et écrit
-un rapport JSON (global, par route, par phase ENSO, par horizon) + le tableau
-de comparaison.
-
-────────────────────────────────────────────────────────────────────────────
-UTILISATION DANS JUPYTER (recommandé)
-────────────────────────────────────────────────────────────────────────────
-Notebook ouvert DANS le dossier 'metocean_forecast' (contenant 'mf/'), le
-dataset étant trouvé automatiquement (dossier courant ou parent).
-
-  • Éditez le bloc CONFIG (en bas) puis, dans une cellule :   %run run_pipeline.py
-  • Ou, sans rien éditer :
-        import run_pipeline as P
-        P.run_config(target="swh", model="tcn", epochs=10)
-  • Aucun argument de ligne de commande n'est requis dans Jupyter (le script
-    n'appelle pas parse_args(), ce qui évite l'erreur liée à l'argument
-    « -f …kernel.json » du noyau).
-
-UTILISATION EN TERMINAL :
-  python run_pipeline.py --data-dir ERA5_ML_dataset \
-      --manifest ERA5_ML_dataset/dataset_manifest.json \
-      --target wspd --model tcn --lookback 48 --horizon 24 \
-      --quantiles 0.1 0.5 0.9 --epochs 60 --out results_tcn.json
-  # baselines seules :  ... --baselines-only
-"""
 import os, sys, json, argparse
 def _locate_mf_root():
     """Trouve le dossier contenant 'mf/' (script, cwd, ou parents)."""
@@ -56,7 +29,7 @@ if _ROOT is None:
         f"Dossier courant : {os.getcwd()}")
 sys.path.insert(0, _ROOT)
 try:
-    import torch  # noqa: F401  (requis par les modèles)
+    import torch 
 except ModuleNotFoundError:
     raise SystemExit(
         "\nPyTorch n'est pas installé dans cet environnement.\n"
@@ -163,7 +136,7 @@ def run(a):
     print(f"\n[OK] rapport -> {os.path.abspath(a.out)}")
 
 
-# \u2500\u2500\u2500 CONFIGURATION (editable dans le notebook) \u2500\u2500\u2500
+# \u2500\u2500\u2500 CONFIGURATION \u2500\u2500\u2500
 CONFIG = dict(
     data_dir="ERA5_ML_dataset",
     manifest="ERA5_ML_dataset/dataset_manifest.json",
@@ -172,7 +145,7 @@ CONFIG = dict(
     model="tcn",                # tcn | bilstm | cnnbilstmattention | tft
     lookback=48,
     horizon=24,
-    stride=12,                  # stride=1 = trop lourd ; 12 = 1 fenetre/12 h
+    stride=12,                  
     quantiles=[0.1, 0.5, 0.9],
     epochs=60,
     batch_size=512,

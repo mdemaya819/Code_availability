@@ -1,31 +1,4 @@
-"""
-ERA5_diagnostic_v2.py
-=====================
-Contrôle qualité des fichiers ERA5 v2 FUSIONNÉS (ERA5_{route}_{box}_{y}_{m}.nc),
-après ERA5_extract_v2.py. Vérifie en particulier que la correction des deux
-manques a réussi :
-  • swh présent et NON 100 % NaN (le bug d'origine) ;
-  • boîte 'IndianOcean' de R1 présente et exploitable.
 
-Contrôles par fichier
----------------------
-  - variables présentes (u10, v10, msl, t2m, swh, mwp, mwd) ;
-  - dimensions (time, lat, lon) et résolution de grille ;
-  - nombre de pas horaires == jours_du_mois × 24 ;
-  - fraction de NaN par variable (swh : NaN sur terre = normal ; 100 % = bug).
-
-Synthèse par route/boîte
-------------------------
-  - fichiers trouvés vs attendus (années × mois), mois manquants ;
-  - statistiques de NaN swh ; nombre de fichiers swh 100 % NaN (= échec) ;
-  - couverture spatiale ; verdict global.
-
-Usage
------
-    python ERA5_diagnostic_v2.py
-    python ERA5_diagnostic_v2.py --route R1_SHA_RTM
-    python ERA5_diagnostic_v2.py --data-dir ERA5_data_v2 --sample 3
-"""
 
 import os
 import sys

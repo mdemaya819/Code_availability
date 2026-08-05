@@ -1,46 +1,4 @@
-"""
-run_experiments.py — Orchestration Phase 4.
 
-Lance la MATRICE expérimentale complète et sauvegarde un JSON par exécution :
-   cibles × modèles × graines  (+ baselines, une fois par cible)
-
-Pour chaque exécution (cible, modèle, graine), enregistre :
-  - métriques TEST : overall, per_route, per_enso_phase, per_horizon_rmse,
-    crps, coverage_80 ;
-  - skill vs persistance ; test de Diebold-Mariano (modèle vs persistance)
-    avec correction Newey-West à l'horizon.
-
-Tout respecte le protocole anti-fuite du pipeline (split par année, stats
-train-only, fenêtrage par nœud/segment contigu).
-
-────────────────────────────────────────────────────────────────────────────
-UTILISATION DANS JUPYTER (recommandé)
-────────────────────────────────────────────────────────────────────────────
-Le notebook doit être ouvert DANS le dossier 'metocean_forecast' (celui qui
-contient 'mf/'), ou le dataset doit être trouvable à côté / dans un parent.
-
-  • Le plus simple — éditez le bloc CONFIG en bas du fichier puis, en cellule :
-        %run run_experiments.py
-
-  • Ou bien, sans rien éditer, appelez la fonction avec vos réglages :
-        import run_experiments as R
-        R.run_config(targets=["swh"], models=["tcn"], seeds=[0],
-                     max_nodes_per_route=5, stride=24, epochs=5)
-
-  • Aucun argument de ligne de commande n'est requis dans Jupyter : le script
-    n'appelle PAS parse_args() en notebook (ce qui éviterait l'erreur due à
-    l'argument « -f …kernel.json » injecté par le noyau).
-
-UTILISATION EN TERMINAL (GPU recommandé pour la matrice complète) :
-    python run_experiments.py --data-dir ERA5_ML_dataset \
-        --manifest ERA5_ML_dataset/dataset_manifest.json \
-        --targets wspd swh mwp --models tcn bilstm cnnbilstmattention tft \
-        --seeds 0 1 2 --lookback 48 --horizon 24 --quantiles 0.1 0.5 0.9 \
-        --epochs 60 --out-dir results
-
-Puis :  python aggregate_results.py --results results
-        (ou en notebook :  %run aggregate_results.py)
-"""
 import os
 import sys
 import glob
@@ -57,10 +15,10 @@ def _locate_mf_root():
     cands = []
     try:
         cands.append(os.path.dirname(os.path.abspath(__file__)))
-    except NameError:                       # cellule Jupyter : pas de __file__
+    except NameError:                       
         pass
     cands.append(os.getcwd())
-    for base in list(cands):                # ajoute jusqu'à 3 niveaux de parents
+    for base in list(cands):                
         p = base
         for _ in range(3):
             p = os.path.dirname(p)
@@ -85,7 +43,7 @@ if _ROOT is None:
         f"Dossier courant : {os.getcwd()}")
 sys.path.insert(0, _ROOT)
 try:
-    import torch  # noqa: F401  (requis par les modèles)
+    import torch  # noqa: F401  
 except ModuleNotFoundError:
     raise SystemExit(
         "\nPyTorch n'est pas installé dans cet environnement.\n"
@@ -344,9 +302,7 @@ def run(args):
              f"aggregate_results.py --results {out}")
 
 
-# ─────────────────── CONFIGURATION (éditable dans le notebook) ──────────────
-# Modifiez ces valeurs puis exécutez «  %run run_experiments.py  »,
-# OU appelez run_config(**réglages) sans rien éditer.
+
 CONFIG = dict(
     data_dir="ERA5_ML_dataset",
     manifest="ERA5_ML_dataset/dataset_manifest.json",
@@ -355,13 +311,13 @@ CONFIG = dict(
     seeds=[0, 1, 2],
     lookback=48,
     horizon=24,
-    stride=12,                 # 12 = 1 fenêtre/12 h (stride=1 est trop lourd)
+    stride=12,                 
     quantiles=[0.1, 0.5, 0.9],
     epochs=60,
     batch=256,
     patience=8,
     out_dir="results",
-    max_nodes_per_route=0,     # 0 = tous ; mettre 5 pour un essai rapide CPU
+    max_nodes_per_route=0,     
     force=False,
 )
 

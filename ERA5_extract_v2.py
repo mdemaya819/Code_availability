@@ -1,27 +1,4 @@
-"""
-ERA5_extract_v2.py
-==================
-Extraction + FUSION des données ERA5 v2 (corrige le bug swh).
 
-Ce que fait ce script, pour chaque boîte/mois de ERA5_data_v2/ :
-  1. Lit le fichier ATMOS et le fichier WAVE (chacun pouvant être un .nc simple
-     OU un ZIP déguisé contenant UN OU PLUSIEURS NetCDF — la nouvelle API CDS
-     scinde souvent les variables ; l'ancien extracteur ne gardait que le
-     premier, d'où la perte des vagues).
-  2. Extrait et FUSIONNE *tous* les NetCDF de chaque fichier.
-  3. Interpole les vagues (grille 0.5°) sur la grille atmosphérique (0.25°) et
-     fusionne tout en UN fichier canonique :
-        ERA5_{route}_{box}_{year}_{month}.nc
-     (mêmes nom et schéma que la chaîne existante → aucun changement en aval).
-  4. Vérifie que le fichier final contient u10,v10,msl,t2m,swh,(mwp,mwd).
-
-Usage
------
-    python ERA5_extract_v2.py
-    python ERA5_extract_v2.py --route R1_SHA_RTM
-    python ERA5_extract_v2.py --keep-raw     # ne pas supprimer les _atmos/_wave
-    python ERA5_extract_v2.py --data-dir ERA5_data_v2
-"""
 
 import os
 import sys
@@ -36,7 +13,7 @@ import numpy as np
 
 try:
     import xarray as xr
-except Exception as exc:                                   # pragma: no cover
+except Exception as exc:                                   
     sys.exit(f"xarray requis : pip install xarray netCDF4 h5netcdf  ({exc})")
 
 try:

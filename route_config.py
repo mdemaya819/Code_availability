@@ -1,35 +1,7 @@
-"""
-route_config.py
-===============
-Configuration centralisée des 4 routes commerciales et de leurs
-boîtes géographiques ERA5.
-
-Utilisé par tous les scripts de téléchargement et de traitement.
-
-Auteur : Likeufack Mdemaya F.A. et al.
-         Jiangsu University of Science and Technology
-Article: Decadal ERA5-Coupled Probabilistic Assessment of Surrogate-Adaptive
-         Flettner Rotor Performance — Ocean Engineering (soumission)
-"""
-
-# ── Définition des routes ─────────────────────────────────────────────────────
-# Chaque route est décrite par :
-#   id       : identifiant court
-#   name     : nom complet
-#   distance : distance approximative en km
-#   speed_kn : vitesse de service en nœuds
-#   P_nom_kW : puissance nominale du moteur principal en kW
-#   SFOC     : consommation spécifique en g/kWh (HFO)
-#   CO2f     : facteur d'émission CO2 en tCO2/t_fuel (MARPOL Annex VI)
-#   DWT      : port en lourd en tonnes (pour calcul CII)
-#   ship_type: type de navire (pour référence CII MEPC.337(76))
-#   waypoints: liste de (lat, lon, nom_segment)
-#   boxes    : boîtes géographiques ERA5 [N, W, S, E]
-#              (une route peut nécessiter plusieurs boîtes)
 
 ROUTES = {
 
-    # ──────────────────────────────────────────────────────────────────────────
+   
     "R1_SHA_RTM": {
         "id":         "R1_SHA_RTM",
         "name":       "Shanghai → Rotterdam (Trans-Eurasian, via Suez)",
@@ -64,14 +36,14 @@ ROUTES = {
             (52.00,   4.50, "North Sea"),
             (51.92,   4.50, "Rotterdam"),
         ],
-        # Deux boîtes : Asie/Océan Indien + Mer Rouge/Europe
+       
         "boxes": [
             {"suffix": "Asia_IO",    "area": [35,  95, -5,  130]},
             {"suffix": "RedSea_EU",  "area": [60, -15, 10,   50]},
         ],
     },
 
-    # ──────────────────────────────────────────────────────────────────────────
+    
     "R2_NFK_HAM": {
         "id":         "R2_NFK_HAM",
         "name":       "Norfolk → Hamburg (North Atlantic)",
@@ -99,7 +71,7 @@ ROUTES = {
         ],
     },
 
-    # ──────────────────────────────────────────────────────────────────────────
+    
     "R3_SIN_SYD": {
         "id":         "R3_SIN_SYD",
         "name":       "Singapore → Sydney (Indo-Pacific)",
@@ -126,7 +98,7 @@ ROUTES = {
         ],
     },
 
-    # ──────────────────────────────────────────────────────────────────────────
+    
     "R4_SHA_LAX": {
         "id":         "R4_SHA_LAX",
         "name":       "Shanghai → Los Angeles (Trans-Pacific)",
@@ -150,7 +122,7 @@ ROUTES = {
             (35.00,-135.00, "NE Pacific South"),
             (33.73,-118.26, "Los Angeles"),
         ],
-        # Trans-Pacific nécessite deux boîtes (traversée de 180°)
+       
         "boxes": [
             {"suffix": "WPacific", "area": [50, 115,  25,  180]},
             {"suffix": "EPacific", "area": [50,-180,  25, -110]},
@@ -158,7 +130,7 @@ ROUTES = {
     },
 }
 
-# ── Paramètres ERA5 communs ───────────────────────────────────────────────────
+
 ERA5_CONFIG = {
     "product_type": "reanalysis",
 
@@ -198,7 +170,7 @@ ERA5_CONFIG = {
         "18:00", "19:00", "20:00", "21:00", "22:00", "23:00",
     ],
 
-    # Jours : tous les jours (31 jours max, ERA5 gère automatiquement les mois courts)
+    # Jours : tous les jours (31 jours max)
     "days": [f"{d:02d}" for d in range(1, 32)],
 
     # Période décennale

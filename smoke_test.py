@@ -1,15 +1,6 @@
-"""
-run_smoke_test.py — Vérifie de bout en bout, sur données SYNTHÉTIQUES, que les
-modèles s'entraînent et s'évaluent SANS fuite. Nécessite torch (à lancer sur
-votre machine). Pour un test rapide :  python run_smoke_test.py
 
-NB : sur données synthétiques (bruit ~stationnaire), la climatologie peut
-battre les réseaux — c'est attendu ; le but est de prouver que la chaîne
-tourne, pas de mesurer un skill réel.
-"""
 import os, sys
 def _locate_mf_root():
-    """Trouve le dossier contenant 'mf/' (script, cwd, ou parents)."""
     cands = []
     try:
         cands.append(os.path.dirname(os.path.abspath(__file__)))
@@ -57,7 +48,7 @@ import make_synthetic
 
 def main(manifest="dataset_manifest.json", lookback=48, horizon=12,
          stride=6, quantiles=(0.1, 0.5, 0.9), epochs=2):
-    # Toujours régénérer (évite un parquet périmé écrit par une autre version)
+    
     make_synthetic.build(manifest, "synthetic_nodes.parquet", nodes_per_route=2)
     man = D.load_manifest(manifest)
     target = "wspd"
@@ -69,7 +60,7 @@ def main(manifest="dataset_manifest.json", lookback=48, horizon=12,
     sy = D.TargetScaler(man["normalization"]["stats"], target)
     quantiles = list(quantiles)
 
-    # Baselines (référence)
+   
     clim, gm = B.fit_climatology(blocks)
     bres = B.evaluate_baselines(blocks, "test", lookback, horizon,
                                 clim=clim, g_mean=gm, stride=stride)

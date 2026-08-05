@@ -1,0 +1,24 @@
+# Configuration par défaut du pipeline de prévision métocéan.
+data:
+  data_dir: ERA5_ML_dataset
+  manifest: ERA5_ML_dataset/dataset_manifest.json
+  target: wspd            # swh est écarté automatiquement (100% NaN dans ce jeu)
+  routes: null            # null = toutes ; sinon liste ['R2_NFK_HAM', ...]
+windowing:
+  lookback: 48            # heures d'historique
+  horizon: 24             # heures à prédire
+  stride: 1               # 1 en production ; >1 pour des essais rapides
+model:
+  name: tcn               # tcn | bilstm | cnnbilstmattention | tft
+  quantiles: [0.1, 0.5, 0.9]   # [] ou [0.5] => ponctuel (MSE)
+train:
+  epochs: 60
+  batch_size: 512
+  lr: 0.001
+  weight_decay: 0.0001
+  patience: 8
+  seed: 0
+split:                    # informatif : la source de vérité est le manifeste
+  train: [2015, 2021]
+  val:   [2022, 2022]
+  test:  [2023, 2024]

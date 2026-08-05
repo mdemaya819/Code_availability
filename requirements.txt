@@ -1,0 +1,9 @@
+numpy>=1.24
+pandas>=2.0
+scipy>=1.10
+scikit-learn>=1.3
+torch>=2.0        # CPU ou CUDA (entraînement des modèles)
+# xgboost>=2.0    # optionnel : baseline gradient boosting sur retards
+tabulate
+pyarrow>=19.0.1   # éviter 19.0.0 (bug "Repetition level histogram", Arrow #45283)
+fastparquet   # moteur parquet de secours (repli auto si bug pyarrow)
